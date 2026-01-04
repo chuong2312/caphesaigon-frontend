@@ -40,15 +40,15 @@
 
         <!-- KHU VỰC ADMIN (Chỉ hiện nếu role == admin) -->
         <div id="adminArea" class="admin-panel">
-            <h2>⚙️ Quản Lý Khóa Học (Admin)</h2>
+            <h2>⚙️ Quản Lý (Admin)</h2>
             <div class="admin-controls">
-                <button class="btn-submit" onclick="openCourseModal()">+ Thêm Khóa Học Mới</button>
+                <button class="btn-submit" onclick="openCourseModal()">+ Thêm đồ ăn/uống mới</button>
             </div>
 
             <table class="course-table">
                 <thead>
                     <tr>
-                        <th>Tên Khóa Học</th>
+                        <th>Tên đồ ăn/uống</th>
                         <th>Giá</th>
                         <th>Hành Động</th>
                     </tr>
@@ -78,15 +78,15 @@
         </div>
     </div>
 
-    <!-- MODAL THÊM/SỬA KHÓA HỌC -->
+    <!-- MODAL THÊM/SỬA ĐỒ ĂN/ƯỐNG -->
     <div class="modal" id="courseModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeCourseModal()">&times;</span>
-            <h3 id="courseModalTitle">Thêm Khóa Học</h3>
+            <h3 id="courseModalTitle">Thêm đồ ăn/uống</h3>
             <form id="courseForm">
                 <input type="hidden" id="courseId"> <!-- Dùng để lưu ID khi sửa -->
                 <div class="form-group">
-                    <label for="courseName">Tên Khóa Học:</label>
+                    <label for="courseName">Tên đồ ăn/uống:</label>
                     <input type="text" id="courseName" required class="form-control"
                         style="width:100%; padding:10px; margin:5px 0;">
                 </div>
