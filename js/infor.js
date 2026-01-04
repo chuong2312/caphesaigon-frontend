@@ -1,0 +1,171 @@
+
+// Logic riêng cho trang Infor
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Kiểm tra đăng nhập
+    const userStr = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+
+    if (!userStr || !token) {
+        alert("Vui lòng đăng nhập trước!");
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const user = JSON.parse(userStr);
+
+    // 2. Hiển thị thông tin
+    document.getElementById('pName').textContent = user.name;
+    document.getElementById('pEmail').textContent = user.email;
+    document.getElementById('pPhone').textContent = user.phone || '...';
+    document.getElementById('pRole').textContent = user.role === 'admin' ? 'Quản Lý (Admin)' : 'Thành Viên';
+
+    // 3. Nếu là Admin -> Hiện bảng quản lý
+    if (user.role === 'admin') {
+        document.getElementById('adminArea').style.display = 'block';
+        loadCourses();
+        loadCustomers();
+    }
+});
+
+// --- CÁC HÀM ADMIN ---
+async function loadCourses() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/courses`);
+        const data = await res.json();
+
+        const tbody = document.getElementById('courseTableBody');
+        tbody.innerHTML = '';
+
+        data.data.forEach(course => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${course.name}</td>
+                <td>${course.price.toLocaleString()}đ</td>
+                <td>
+                    <button class="btn-action btn-edit" onclick="editCourse('${course._id}', '${course.name}', ${course.price}, '${course.description}')">Sửa</button>
+                    <button class="btn-action btn-delete" onclick="deleteCourse('${course._id}')">Xóa</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Lỗi tải khóa học", err);
+    }
+}
+
+async function loadCustomers() {
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/customers`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+
+        const tbody = document.getElementById('userTableBody');
+        tbody.innerHTML = '';
+
+        data.data.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>${user.phone || '...'}</td>
+                <td>
+                    <span class="badge ${user.role === 'admin' ? 'badge-admin' : 'badge-user'}">
+                        ${user.role === 'admin' ? 'Quản trị viên' : 'Thành viên'}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Lỗi tải danh sách thành viên", err);
+    }
+}
+
+const courseModal = document.getElementById('courseModal');
+
+function openCourseModal() {
+    // Reset form add
+    document.getElementById('courseForm').reset();
+    document.getElementById('courseId').value = '';
+    document.getElementById('courseModalTitle').textContent = 'Thêm Khóa Học Mới';
+    courseModal.classList.add('active');
+}
+
+function closeCourseModal() {
+    courseModal.classList.remove('active');
+}
+
+// Điền dữ liệu vào form để sửa
+window.editCourse = (id, name, price, desc) => {
+    document.getElementById('courseId').value = id;
+    document.getElementById('courseName').value = name;
+    document.getElementById('coursePrice').value = price;
+    document.getElementById('courseDesc').value = desc || '';
+    document.getElementById('courseModalTitle').textContent = 'Cập Nhật Khóa Học';
+    courseModal.classList.add('active');
+};
+
+// Xử lý Submit Form (Thêm hoặc Sửa)
+document.getElementById('courseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('courseId').value;
+    const name = document.getElementById('courseName').value;
+    const price = document.getElementById('coursePrice').value;
+    const description = document.getElementById('courseDesc').value;
+
+    const token = localStorage.getItem('token');
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${API_BASE_URL}/api/courses/${id}` : `${API_BASE_URL}/api/courses`;
+
+    try {
+        const res = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Gửi token để xác thực admin
+            },
+            body: JSON.stringify({ name, price, description })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert('Thành công!');
+            closeCourseModal();
+            loadCourses(); // Tải lại bảng
+        } else {
+            alert('Lỗi: ' + data.message || 'Không thể thực hiện');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Lỗi kết nối!');
+    }
+});
+
+// Xóa khóa học
+window.deleteCourse = async (id) => {
+    if (!confirm("Bạn có chắc muốn xóa không?")) return;
+
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/courses/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert("Đã xóa!");
+            loadCourses();
+        } else {
+            alert("Lỗi xóa: " + data.message);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+};

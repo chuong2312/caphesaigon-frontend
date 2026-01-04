@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Sài Gòn - Ký Ức Trong Từng Giọt Đắng</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">☕ Café Sài Gòn</div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Trang chủ</a></li>
+                <li><a href="#story">Câu chuyện</a></li>
+                <li><a href="#menu">Thực đơn</a></li>
+                <li><a href="#reviews">Đánh giá</a></li>
+                <li><a href="#contact">Liên hệ</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="icon-btn" id="cartBtn">
+                    🛒 <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <div id="userActionArea" style="display: flex; gap: 10px;">
+                    <button class="btn-login" id="loginBtn">Đăng nhập</button>
+                    <button class="btn-signup" id="signupBtn">Đăng ký</button>
+                </div>
+
+                <div id="userInfoArea" style="display: none; align-items: center; gap: 10px;">
+                    <span style="font-weight: bold; color: var(--primary);">Xin chào, <span
+                            id="userNameDisplay">Bạn</span>!</span>
+                    <button onclick="logoutUser()"
+                        style="border: none; background: none; cursor: pointer; color: red;">Đăng xuất</button>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="slider" id="home">
+        <div class="slider-container">
+            <div class="slide"
+                style="background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
+                <div class="slide-content">
+                    <h2>Hương Vị Sài Gòn Xưa</h2>
+                    <p>Gìn giữ nét văn hóa cà phê vợt truyền thống qua bao thế hệ.</p>
+                    <a href="#menu" class="btn-hero">Khám Phá Ngay</a>
+                </div>
+            </div>
+            <div class="slide"
+                style="background-image: url('data:image/jpeg;base64,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');">
+                <div class="slide-content">
+                    <h2>Không Gian Hoài Niệm</h2>
+                    <p>Nơi thời gian lắng đọng bên ly cà phê phin tí tách.</p>
+                    <a href="#story" class="btn-hero">Về Chúng Tôi</a>
+                </div>
+            </div>
+        </div>
+        <div class="slider-dots">
+            <span class="dot active" data-index="0"></span>
+            <span class="dot" data-index="1"></span>
+        </div>
+    </div>
+
+    <section id="story" class="about-section reveal">
+        <div class="container">
+            <h2 class="section-title">Câu Chuyện Của Chúng Tôi</h2>
+            <div class="about-grid">
+                <div class="about-img">
+                    <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Không gian quán">
+                </div>
+                <div class="about-text">
+                    <h3>Từ Một Góc Phố Nhỏ...</h3>
+                    <p>
+                        Café Sài Gòn không chỉ là một quán nước, đó là nơi lưu giữ những ký ức. Khởi nguồn từ một xe đẩy
+                        cà phê nhỏ vào những năm 90, chúng tôi lớn lên cùng nhịp thở hối hả nhưng đầy tình cảm của thành
+                        phố này.
+                    </p>
+                    <p>
+                        Chúng tôi tin rằng, một ly cà phê ngon không chỉ nằm ở hạt rang xay đúng điệu, mà còn ở cái
+                        "tình" của người pha chế. Tại đây, mỗi giọt cà phê rơi xuống là một nốt trầm trong bản nhạc cuộc
+                        sống, giúp bạn sống chậm lại giữa thế giới vội vã.
+                    </p>
+                    <p>
+                        <strong>Sứ mệnh:</strong> Mang hương vị cà phê Việt nguyên bản đến với thế hệ trẻ, kết hợp cùng
+                        không gian Vintage để tạo nên một chốn về bình yên.
+                    </p>
+                    <button class="btn-secondary">Xem Thêm Hành Trình</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="menu-section reveal">
+        <div class="container">
+            <h2 class="section-title">Thực Đơn Tuyển Chọn</h2>
+
+            <h3 class="menu-category">☕ Cà Phê Việt Nam</h3>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="images/ca-phe-sua-da-5.jpg" alt="Cà Phê Sữa Đá">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Cà Phê Sữa Đá</h4>
+                        <p>Đậm đà hương vị phin truyền thống, sữa đặc Ông Thọ.</p>
+                        <div class="price-row">
+                            <span class="price">29.000đ</span>
+                            <button class="add-to-cart" data-name="Cà Phê Sữa Đá" data-price="29000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="images/cafe-bac-xiu-da_d6b6b74d22d64a0fb48324225e222fa6.jpeg" alt="Bạc Xỉu">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Bạc Xỉu Đá</h4>
+                        <p>Nhiều sữa ít cà phê, hương vị tuổi thơ ngọt ngào.</p>
+                        <div class="price-row">
+                            <span class="price">32.000đ</span>
+                            <button class="add-to-cart" data-name="Bạc Xỉu Đá" data-price="32000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="images/cafe_trung.jpg" alt="Cà Phê Trứng">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Cà Phê Trứng</h4>
+                        <p>Lớp kem trứng béo ngậy phủ trên nền cà phê nóng.</p>
+                        <div class="price-row">
+                            <span class="price">45.000đ</span>
+                            <button class="add-to-cart" data-name="Cà Phê Trứng" data-price="45000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="menu-category">🍹 Trà & Trái Cây</h3>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                            alt="Trà Đào">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Trà Đào Cam Sả</h4>
+                        <p>Thanh mát, giải nhiệt với đào miếng giòn tan.</p>
+                        <div class="price-row">
+                            <span class="price">39.000đ</span>
+                            <button class="add-to-cart" data-name="Trà Đào Cam Sả" data-price="39000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="https://images.unsplash.com/photo-1595981267035-7b04ca84a82d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                            alt="Sinh Tố Bơ">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Sinh Tố Bơ Dừa</h4>
+                        <p>Bơ sáp dẻo mịn kết hợp cốt dừa béo thơm.</p>
+                        <div class="price-row">
+                            <span class="price">42.000đ</span>
+                            <button class="add-to-cart" data-name="Sinh Tố Bơ Dừa" data-price="42000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="menu-category">🍰 Bánh Ngọt & Ăn Nhẹ</h3>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                            alt="Tiramisu">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Bánh Tiramisu</h4>
+                        <p>Hương vị Ý lãng mạn, mềm tan trong miệng.</p>
+                        <div class="price-row">
+                            <span class="price">40.000đ</span>
+                            <button class="add-to-cart" data-name="Bánh Tiramisu" data-price="40000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="images/banh_mi_croissant.jpg" alt="Croissant">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Bánh Mì Croissant</h4>
+                        <p>Bánh sừng bò ngàn lớp nướng bơ thơm lừng.</p>
+                        <div class="price-row">
+                            <span class="price">35.000đ</span>
+                            <button class="add-to-cart" data-name="Croissant Bơ" data-price="35000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="images/banh-mi-chao-sai-gon-jpg.webp" alt="Bánh Mì">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>Bánh Mì Chảo</h4>
+                        <p>Đầy đủ topping: trứng, pate, xíu mại, xúc xích.</p>
+                        <div class="price-row">
+                            <span class="price">45.000đ</span>
+                            <button class="add-to-cart" data-name="Bánh Mì Chảo" data-price="45000">Thêm +</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews" class="reviews-section reveal">
+        <div class="container">
+            <h2 class="section-title">Khách Hàng Nói Gì?</h2>
+            <div class="review-grid">
+                <div class="review-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"Không gian quán rất tuyệt vời, mang đậm nét hoài cổ. Cà phê sữa đá pha rất vừa miệng, không quá
+                        ngọt."</p>
+                    <div class="user-info">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
+                        <span>Minh Anh</span>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"Địa điểm lý tưởng để làm việc và chill cuối tuần. Nhạc nhẹ nhàng, nhân viên thân thiện. Sẽ quay
+                        lại!"</p>
+                    <div class="user-info">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+                        <span>Hoàng Nam</span>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"Bánh Tiramisu ở đây là chân ái! Mềm mịn và thơm mùi rượu nhẹ. Rất đáng thử nhé mọi người."</p>
+                    <div class="user-info">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User">
+                        <span>Thảo Trang</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-section reveal">
+        <div class="container">
+            <h2 class="section-title">Góc Cảm Hứng</h2>
+            <div class="blog-grid">
+                <div class="blog-card">
+                    <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+                        alt="Blog 1">
+                    <div class="blog-content">
+                        <h4>Cách Phân Biệt Arabica và Robusta</h4>
+                        <p>Tìm hiểu sự khác biệt tinh tế giữa hai loại hạt cà phê phổ biến nhất thế giới...</p>
+                        <a href="#">Đọc tiếp →</a>
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <img src="images/anh-ly-ca-phe-chill-28.jpg" alt="Blog 2">
+                    <div class="blog-content">
+                        <h4>Nghệ Thuật Thưởng Thức Cà Phê Phin</h4>
+                        <p>Pha cà phê phin không chỉ là kỹ thuật, đó là một nghệ thuật chờ đợi...</p>
+                        <a href="#">Đọc tiếp →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content container">
+            <div class="footer-col">
+                <h3>Café Sài Gòn</h3>
+                <p>Nơi lưu giữ hương vị ký ức.</p>
+                <div class="social-links">
+                    <a href="#">FB</a>
+                    <a href="#">IG</a>
+                    <a href="#">TT</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Hệ</h3>
+                <p>📍 123 Đường Nguyễn Huệ, Q.1, TP.HCM</p>
+                <p>📞 0909 123 456</p>
+                <p>📧 hello@cafesaigon.com</p>
+            </div>
+            <div class="footer-col">
+                <h3>Giờ Mở Cửa</h3>
+                <p>Thứ 2 - Thứ 6: 07:00 - 22:00</p>
+                <p>Cuối tuần: 08:00 - 23:00</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Café Sài Gòn. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeCart">&times;</span>
+            <h3>Giỏ Hàng Của Bạn</h3>
+            <div id="cartItems" class="cart-list"></div>
+            <div class="cart-total-section">
+                <span>Tổng cộng:</span>
+                <span id="cartTotal">0đ</span>
+            </div>
+            <button id="checkoutBtn" class="btn-checkout">Thanh Toán Ngay</button>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="modal" id="registerModal">
+        <div class="modal-content auth-modal">
+            <span class="close-modal" id="closeRegister">&times;</span>
+            <h3>Đăng Ký Thành Viên</h3>
+            <p class="modal-subtitle">Nhận ngay ưu đãi 20% cho lần đầu tiên!</p>
+            <form id="registerForm">
+                <div class="form-group">
+                    <input type="text" placeholder="Họ và tên" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Email của bạn" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="Số điện thoại" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="registerPassword" placeholder="Mật khẩu" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Đăng Ký Ngay</button>
+                <div class="form-links">
+                    Đã có tài khoản? <a href="#" id="switchToLogin">Đăng nhập tại đây</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content auth-modal">
+            <span class="close-modal" id="closeLogin">&times;</span>
+            <h3>Đăng Nhập</h3>
+            <p class="modal-subtitle">Chào mừng bạn quay trở lại!</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Mật khẩu" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Đăng Nhập</button>
+                <div class="form-links">
+                    Chưa có tài khoản? <a href="#" id="switchToRegister">Đăng ký mới</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

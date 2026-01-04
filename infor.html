@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Cá Nhân - Café Sài Gòn</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">☕ Café Sài Gòn</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Trang chủ</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button onclick="logoutUser()" style="border: none; background: none; cursor: pointer; color: red;">Đăng
+                    xuất</button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>Thông Tin Cá Nhân</h1>
+        </div>
+
+        <div class="user-card">
+            <h3>Hồ Sơ Của Bạn</h3>
+            <p><strong>Tên:</strong> <span id="pName">...</span></p>
+            <p><strong>Email:</strong> <span id="pEmail">...</span></p>
+            <p><strong>Số điện thoại:</strong> <span id="pPhone">...</span></p>
+            <p><strong>Vai trò:</strong> <span id="pRole">...</span></p>
+        </div>
+
+        <!-- KHU VỰC ADMIN (Chỉ hiện nếu role == admin) -->
+        <div id="adminArea" class="admin-panel">
+            <h2>⚙️ Quản Lý Khóa Học (Admin)</h2>
+            <div class="admin-controls">
+                <button class="btn-submit" onclick="openCourseModal()">+ Thêm Khóa Học Mới</button>
+            </div>
+
+            <table class="course-table">
+                <thead>
+                    <tr>
+                        <th>Tên Khóa Học</th>
+                        <th>Giá</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody id="courseTableBody">
+                    <!-- Dữ liệu sẽ đổ vào đây -->
+                </tbody>
+            </table>
+
+            <br>
+            <hr><br>
+
+            <h2>👥 Quản Lý Thành Viên</h2>
+            <table class="course-table">
+                <thead>
+                    <tr>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>SĐT</th>
+                        <th>Vai trò</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- Dữ liệu user sẽ đổ vào đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM/SỬA KHÓA HỌC -->
+    <div class="modal" id="courseModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCourseModal()">&times;</span>
+            <h3 id="courseModalTitle">Thêm Khóa Học</h3>
+            <form id="courseForm">
+                <input type="hidden" id="courseId"> <!-- Dùng để lưu ID khi sửa -->
+                <div class="form-group">
+                    <label for="courseName">Tên Khóa Học:</label>
+                    <input type="text" id="courseName" required class="form-control"
+                        style="width:100%; padding:10px; margin:5px 0;">
+                </div>
+                <div class="form-group">
+                    <label for="coursePrice">Giá Tiền (VNĐ):</label>
+                    <input type="number" id="coursePrice" required class="form-control"
+                        style="width:100%; padding:10px; margin:5px 0;">
+                </div>
+                <div class="form-group">
+                    <label for="courseDesc">Mô tả:</label>
+                    <textarea id="courseDesc" class="form-control"
+                        style="width:100%; padding:10px; margin:5px 0;"></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Lưu Lại</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script src="js/infor.js"></script>
+</body>
+
+</html>
