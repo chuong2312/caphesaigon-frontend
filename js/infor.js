@@ -114,22 +114,31 @@ document.getElementById('courseForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const id = document.getElementById('courseId').value;
-    const name = document.getElementById('courseName').value;
-    const price = document.getElementById('coursePrice').value;
-    const description = document.getElementById('courseDesc').value;
-
     const token = localStorage.getItem('token');
     const method = id ? 'PUT' : 'POST';
     const url = id ? `${API_BASE_URL}/api/courses/${id}` : `${API_BASE_URL}/api/courses`;
 
+    // 1. Khởi tạo FormData
+    const formData = new FormData();
+    formData.append('name', document.getElementById('courseName').value);
+    formData.append('price', document.getElementById('coursePrice').value);
+    formData.append('description', document.getElementById('courseDesc').value);
+
+    // 2. Check xem có file ảnh không
+    const imageInput = document.getElementById('courseImage');
+    if (imageInput.files[0]) {
+        formData.append('image', imageInput.files[0]);
+    }
+
     try {
+        // 3. Gọi Fetch API (Lưu ý: KHÔNG để header Content-Type)
         const res = await fetch(url, {
             method: method,
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Gửi token để xác thực admin
+                'Authorization': `Bearer ${token}` 
+                // KHÔNG ĐƯỢC THÊM 'Content-Type': 'application/json' ở đây
             },
-            body: JSON.stringify({ name, price, description })
+            body: formData
         });
 
         const data = await res.json();

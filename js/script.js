@@ -339,6 +339,95 @@ window.logoutUser = () => {
 
         alert("Đã đăng xuất thành công!");
         window.location.href = 'index.html';
-        // window.location.reload();
+    // window.location.reload();
     }
 };
+
+// --- X. DYNAMIC MENU LOGIC (NEW) ---
+async function loadDynamicMenu() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/courses`);
+        const data = await res.json();
+        const container = document.getElementById('dynamicMenuContainer');
+
+        if(data.success && container) {
+            container.innerHTML = ''; // Clear loading text
+
+            if (data.data.length === 0) {
+                container.innerHTML = '<p style="text-align:center">Chưa có món mới nào.</p>';
+                return;
+            }
+
+            data.data.forEach(item => {
+                // Xử lý ảnh: Nếu item.image bắt đầu bằng /uploads thì thêm domain vào
+                // Lưu ý: check logic đường dẫn ảnh cho kỹ
+                let imgSrc = item.image;
+                if (item.image && !item.image.startsWith('http')) {
+                    imgSrc = `${API_BASE_URL}${item.image}`;
+                }
+                
+                // Fallback nếu không có ảnh
+                if (!imgSrc) imgSrc = 'https://via.placeholder.com/300?text=No+Image';
+
+                // Render HTML (Copy y nguyên cấu trúc class .menu-item của menu cũ)
+                const html = `
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="${imgSrc}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/300?text=Error'">
+                    </div>
+                    <div class="menu-item-content">
+                        <h4>${item.name}</h4>
+                        <p>${item.description || ''}</p>
+                        <div class="price-row">
+                            <span class="price">${item.price.toLocaleString()}đ</span>
+                            <button class="add-to-cart" data-name="${item.name}" data-price="${item.price}">
+                                Thêm +
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+                container.innerHTML += html;
+            });
+
+            // QUAN TRỌNG: Gán lại sự kiện Click cho nút "Thêm +" mới sinh ra
+            // (Vì code cũ chỉ gán event cho các nút có sẵn lúc đầu)
+            reattachCartEvents();
+        }
+    } catch (e) { console.error("Error loading menu:", e); }
+}
+
+// Hàm gán sự kiện cho nút động
+function reattachCartEvents() {
+    document.querySelectorAll('#dynamicMenuContainer .add-to-cart').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            addToCart(e.target.dataset.name, parseFloat(e.target.dataset.price), e.target);
+        });
+    });
+}
+
+// Helper function reuse existing logic
+function addToCart(name, price, btnElement) {
+    const existingItem = cart.find(item => item.name === name);
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        cart.push({ name, price, quantity: 1 });
+    }
+
+    updateCart();
+
+    // Hiệu ứng nút (Reuse animation logic)
+    if (btnElement) {
+        const originalText = btnElement.textContent;
+        btnElement.textContent = "✔";
+        btnElement.style.background = "#2e7d32";
+        setTimeout(() => {
+            btnElement.textContent = originalText;
+            btnElement.style.background = "";
+        }, 800);
+    }
+}
+
+
+// Gọi hàm khi load trang
+document.addEventListener('DOMContentLoaded', loadDynamicMenu);
