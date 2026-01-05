@@ -368,52 +368,8 @@ async function loadDynamicMenu() {
             }
 
             data.data.forEach(item => {
-                // [COMMENT]: Xử lý đường dẫn ảnh.
-                // Backend có thể trả về đường dẫn Windows (dấu \) nên cần đổi thành dấu / để browser hiểu.
-                let imgSrc = item.image;
-                if (imgSrc) {
-                     // Thay thế tất cả dấu \ thành /
-                    imgSrc = imgSrc.replace(/\\/g, '/');
-                    
-                    // Nếu là đường dẫn tương đối (không bắt đầu bằng http), thì nối thêm API_BASE_URL
-                    if (!imgSrc.startsWith('http')) {
-                        // Đảm bảo có dấu / ở giữa
-                         if (!imgSrc.startsWith('/')) {
-                             imgSrc = '/' + imgSrc;
-                         }
-                        imgSrc = `${API_BASE_URL}${imgSrc}`;
-                    }
-                } else {
-                    // Ảnh mặc định nếu không có ảnh
-                    imgSrc = 'https://via.placeholder.com/300?text=No+Image';
-                }
-
-                // [COMMENT]: Xử lý tên món ăn để tránh lỗi khi có dấu ngoặc kép "
-                // Ta thay thế dấu " thành &quot; để HTML hiểu đúng
-                const safeName = item.name.replace(/"/g, '&quot;');
-                
-                // Render HTML
-                const html = `
-                <div class="menu-item">
-                    <div class="menu-item-img">
-                        <img src="${imgSrc}" alt="${safeName}" onerror="this.src='https://via.placeholder.com/300?text=Error'">
-                    </div>
-                    <div class="menu-item-content">
-                        <h4>${item.name}</h4>
-                        <p>${item.description || ''}</p>
-                        <div class="price-row">
-                            <span class="price">${item.price.toLocaleString()}đ</span>
-                            <!-- Sử dụng safeName trong data-name -->
-                            <button class="add-to-cart" data-name="${safeName}" data-price="${item.price}">
-                                Thêm +
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
-                container.innerHTML += html;
+                container.innerHTML += createProductCard(item);
             });
-
-
 
             // QUAN TRỌNG: Gán lại sự kiện Click cho nút "Thêm +" mới sinh ra
             // (Vì code cũ chỉ gán event cho các nút có sẵn lúc đầu)
@@ -422,6 +378,55 @@ async function loadDynamicMenu() {
         }
     } catch (e) { console.error("Error loading menu:", e); }
 }
+
+// Hàm Helper tạo HTML cho thẻ sản phẩm (Chuẩn hóa giao diện)
+function createProductCard(item) {
+    // [COMMENT]: Xử lý đường dẫn ảnh.
+    // Backend có thể trả về đường dẫn Windows (dấu \) nên cần đổi thành dấu / để browser hiểu.
+    let imgSrc = item.image;
+    if (imgSrc) {
+            // Thay thế tất cả dấu \ thành /
+        imgSrc = imgSrc.replace(/\\/g, '/');
+        
+        // Nếu là đường dẫn tương đối (không bắt đầu bằng http), thì nối thêm API_BASE_URL
+        if (!imgSrc.startsWith('http')) {
+            // Đảm bảo có dấu / ở giữa
+                if (!imgSrc.startsWith('/')) {
+                    imgSrc = '/' + imgSrc;
+                }
+            imgSrc = `${API_BASE_URL}${imgSrc}`;
+        }
+    } else {
+        // Ảnh mặc định nếu không có ảnh
+        imgSrc = 'https://via.placeholder.com/300?text=No+Image';
+    }
+
+    // [COMMENT]: Xử lý tên món ăn để tránh lỗi khi có dấu ngoặc kép "
+    // Ta thay thế dấu " thành &quot; để HTML hiểu đúng
+    const safeName = item.name.replace(/"/g, '&quot;');
+    
+    // Render HTML chuẩn theo template của các món static
+    return `
+    <div class="menu-item">
+        <div class="menu-item-img">
+            <img src="${imgSrc}" alt="${safeName}" onerror="this.src='https://via.placeholder.com/300?text=Error'">
+        </div>
+        <div class="menu-item-content">
+            <h4>${item.name}</h4>
+            <p>${item.description || ''}</p>
+            <div class="price-row">
+                <span class="price">${item.price.toLocaleString()}đ</span>
+                <!-- Sử dụng safeName trong data-name -->
+                <button class="add-to-cart" data-name="${safeName}" data-price="${item.price}">
+                    Thêm +
+                </button>
+            </div>
+        </div>
+    </div>`;
+}
+
+
+
 
 // Hàm gán sự kiện cho nút động
 function reattachCartEvents() {
