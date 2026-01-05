@@ -9,8 +9,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
 
     if (!userStr || !token) {
-        alert("Vui lòng đăng nhập trước!");
-        window.location.href = 'index.html'; // [COMMENT]: Nếu chưa đăng nhập, đá về trang chủ
+        // [COMMENT]: Chỉ redirect nếu KHÔNG ở trang chủ để tránh loop
+        if (window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
+            alert("Vui lòng đăng nhập trước!");
+            window.location.href = 'index.html'; 
+        }
         return;
     }
 
