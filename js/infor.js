@@ -36,8 +36,12 @@ let currentCourses = [];
 
 // --- CÁC HÀM ADMIN ---
 async function loadCourses() {
+    const token = localStorage.getItem('token');
     try {
         const res = await fetch(`${API_BASE_URL}/api/courses`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
             credentials: 'include' // <--- QUAN TRỌNG: Để gửi kèm cookie nếu có
         });
 

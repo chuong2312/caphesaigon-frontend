@@ -212,7 +212,8 @@ if (registerForm) { // Kiểm tra nếu form tồn tại thì mới chạy
                     'Content-Type': 'application/json'
                 },
                 // Gửi thêm password nếu server cần, hoặc chỉ gửi name, email, phone như cũ
-                body: JSON.stringify({ name, email, phone, password })
+                body: JSON.stringify({ name, email, phone, password }),
+                credentials: 'include' // <--- QUAN TRỌNG
             });
 
             const data = await response.json();
@@ -283,7 +284,8 @@ if (loginForm) {
             const response = await fetch(`${API_BASE_URL}/api/customers/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password }),
+                credentials: 'include' // <--- QUAN TRỌNG: Để server set cookie
             });
 
             const data = await response.json();
