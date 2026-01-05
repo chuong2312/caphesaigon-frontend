@@ -27,22 +27,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// [COMMENT]: Biến toàn cục để lưu danh sách khóa học hiện tại.
+// Giúp ta lấy được thông tin chi tiết khi bấm Sửa mà không cần truyền vào HTML gây lỗi.
+let currentCourses = [];
+
 // --- CÁC HÀM ADMIN ---
 async function loadCourses() {
     try {
         const res = await fetch(`${API_BASE_URL}/api/courses`);
+
+        // [COMMENT]: Kiểm tra nếu token hết hạn hoặc lỗi xác thực (401)
+        if (res.status === 401) {
+            alert("Phiên đăng nhập hết hạn! Vui lòng đăng nhập lại.");
+            logoutUser(); // Gọi hàm đăng xuất bên script.js
+            return;
+        }
+
         const data = await res.json();
+        
+        // [COMMENT]: Lưu dữ liệu mới tải về vào biến toàn cục
+        currentCourses = data.data;
 
         const tbody = document.getElementById('courseTableBody');
         tbody.innerHTML = '';
 
-        data.data.forEach(course => {
+        currentCourses.forEach(course => {
             const tr = document.createElement('tr');
+            // [COMMENT]: Ở nút Sửa, ta chỉ truyền ID vào hàm editCourse.
+            // Dữ liệu chi tiết sẽ được tìm trong mảng currentCourses dựa trên ID này.
+            // Cách này an toàn hơn, tránh lỗi khi tên món có dấu nháy ' hoặc "
             tr.innerHTML = `
                 <td>${course.name}</td>
                 <td>${course.price.toLocaleString()}đ</td>
                 <td>
-                    <button class="btn-action btn-edit" onclick="editCourse('${course._id}', '${course.name}', ${course.price}, '${course.description}')">Sửa</button>
+                    <button class="btn-action btn-edit" onclick="editCourse('${course._id}')">Sửa</button>
                     <button class="btn-action btn-delete" onclick="deleteCourse('${course._id}')">Xóa</button>
                 </td>
             `;
@@ -100,12 +118,26 @@ function closeCourseModal() {
 }
 
 // Điền dữ liệu vào form để sửa
-window.editCourse = (id, name, price, desc) => {
-    document.getElementById('courseId').value = id;
-    document.getElementById('courseName').value = name;
-    document.getElementById('coursePrice').value = price;
-    document.getElementById('courseDesc').value = desc || '';
+// Điền dữ liệu vào form để sửa
+window.editCourse = (id) => {
+    // [COMMENT]: Tìm món ăn trong danh sách đã tải bằng ID
+    const course = currentCourses.find(c => c._id === id);
+    
+    if (!course) {
+        alert("Không tìm thấy thông tin món ăn!");
+        return;
+    }
+
+    // [COMMENT]: Điền dữ liệu vào form
+    document.getElementById('courseId').value = course._id;
+    document.getElementById('courseName').value = course.name;
+    document.getElementById('coursePrice').value = course.price;
+    document.getElementById('courseDesc').value = course.description || '';
+    
+    // Đổi tiêu đề modal
     document.getElementById('courseModalTitle').textContent = 'Cập Nhật Khóa Học';
+    
+    // Mở modal
     courseModal.classList.add('active');
 };
 

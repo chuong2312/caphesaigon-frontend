@@ -71,3 +71,22 @@ if (req.file) {
     req.body.image = '/uploads/' + req.file.filename;
 }
 ```
+
+## 7. Enable CORS (Critical for Cloudflare Pages)
+**File:** `src/app.js` or `server.js` (The main entry file of your backend)
+
+Since you are hosting Frontend on Cloudflare and Backend on Render, you **MUST** enable CORS for the new domain.
+
+```javascript
+const cors = require('cors'); // Make sure to npm install cors
+
+app.use(cors({
+    origin: [
+        'http://localhost:5500', 
+        'http://127.0.0.1:5500', 
+        'https://caphesaigon.pages.dev' // <--- ADD YOUR CLOUDFLARE DOMAIN HERE
+    ],
+    credentials: true
+}));
+```
+

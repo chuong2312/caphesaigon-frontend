@@ -366,28 +366,43 @@ async function loadDynamicMenu() {
             }
 
             data.data.forEach(item => {
-                // Xử lý ảnh: Nếu item.image bắt đầu bằng /uploads thì thêm domain vào
-                // Lưu ý: check logic đường dẫn ảnh cho kỹ
+                // [COMMENT]: Xử lý đường dẫn ảnh.
+                // Backend có thể trả về đường dẫn Windows (dấu \) nên cần đổi thành dấu / để browser hiểu.
                 let imgSrc = item.image;
-                if (item.image && !item.image.startsWith('http')) {
-                    imgSrc = `${API_BASE_URL}${item.image}`;
+                if (imgSrc) {
+                     // Thay thế tất cả dấu \ thành /
+                    imgSrc = imgSrc.replace(/\\/g, '/');
+                    
+                    // Nếu là đường dẫn tương đối (không bắt đầu bằng http), thì nối thêm API_BASE_URL
+                    if (!imgSrc.startsWith('http')) {
+                        // Đảm bảo có dấu / ở giữa
+                         if (!imgSrc.startsWith('/')) {
+                             imgSrc = '/' + imgSrc;
+                         }
+                        imgSrc = `${API_BASE_URL}${imgSrc}`;
+                    }
+                } else {
+                    // Ảnh mặc định nếu không có ảnh
+                    imgSrc = 'https://via.placeholder.com/300?text=No+Image';
                 }
-                
-                // Fallback nếu không có ảnh
-                if (!imgSrc) imgSrc = 'https://via.placeholder.com/300?text=No+Image';
 
-                // Render HTML (Copy y nguyên cấu trúc class .menu-item của menu cũ)
+                // [COMMENT]: Xử lý tên món ăn để tránh lỗi khi có dấu ngoặc kép "
+                // Ta thay thế dấu " thành &quot; để HTML hiểu đúng
+                const safeName = item.name.replace(/"/g, '&quot;');
+                
+                // Render HTML
                 const html = `
                 <div class="menu-item">
                     <div class="menu-item-img">
-                        <img src="${imgSrc}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/300?text=Error'">
+                        <img src="${imgSrc}" alt="${safeName}" onerror="this.src='https://via.placeholder.com/300?text=Error'">
                     </div>
                     <div class="menu-item-content">
                         <h4>${item.name}</h4>
                         <p>${item.description || ''}</p>
                         <div class="price-row">
                             <span class="price">${item.price.toLocaleString()}đ</span>
-                            <button class="add-to-cart" data-name="${item.name}" data-price="${item.price}">
+                            <!-- Sử dụng safeName trong data-name -->
+                            <button class="add-to-cart" data-name="${safeName}" data-price="${item.price}">
                                 Thêm +
                             </button>
                         </div>
