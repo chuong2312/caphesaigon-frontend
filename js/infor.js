@@ -1,4 +1,7 @@
 
+// Link Backend:
+var API_BASE_URL = "https://caphesaigon-backend-api.onrender.com";
+
 // Logic riêng cho trang Infor
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Kiểm tra đăng nhập
@@ -34,7 +37,9 @@ let currentCourses = [];
 // --- CÁC HÀM ADMIN ---
 async function loadCourses() {
     try {
-        const res = await fetch(`${API_BASE_URL}/api/courses`);
+        const res = await fetch(`${API_BASE_URL}/api/courses`, {
+            credentials: 'include' // <--- QUAN TRỌNG: Để gửi kèm cookie nếu có
+        });
 
         // [COMMENT]: Kiểm tra nếu token hết hạn hoặc lỗi xác thực (401)
         if (res.status === 401) {
@@ -77,7 +82,8 @@ async function loadCustomers() {
         const res = await fetch(`${API_BASE_URL}/api/customers`, {
             headers: {
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            credentials: 'include' // <--- QUAN TRỌNG
         });
         const data = await res.json();
 
@@ -174,7 +180,8 @@ document.getElementById('courseForm').addEventListener('submit', async (e) => {
                 // [COMMENT]: Khi dùng FormData, browser tự động set Content-Type là multipart/form-data kèm boundary.
                 // Nếu set tay 'application/json' sẽ bị lỗi server không đọc được file.
             },
-            body: formData
+            body: formData,
+            credentials: 'include' // <--- QUAN TRỌNG
         });
 
         const data = await res.json();
@@ -201,7 +208,8 @@ window.deleteCourse = async (id) => {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            credentials: 'include' // <--- QUAN TRỌNG
         });
         const data = await res.json();
         if (data.success) {
