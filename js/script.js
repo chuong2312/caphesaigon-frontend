@@ -1,6 +1,7 @@
 // --- 1. SLIDER LOGIC (GIỮ NGUYÊN) ---
 // const API_BASE_URL = "http://localhost:3000"; // Có thể định nghĩa ở file config riêng nếu muốn
 // Nếu đang ở trang infor.html thì API_BASE_URL đã được định nghĩa bên kia, nhưng để chắc chắn ta check
+// [COMMENT]: Biến này quan trọng để trỏ về Backend. Nếu chạy local thì đổi lại localhost.
 if (typeof API_BASE_URL === 'undefined') {
     var API_BASE_URL = "https://caphesaigon-backend-api.onrender.com";
 }
@@ -28,7 +29,9 @@ dots.forEach((dot, index) => {
 });
 
 // --- CHECK LOGIN STATE ON LOAD ---
+// --- CHECK LOGIN STATE ON LOAD ---
 document.addEventListener('DOMContentLoaded', () => {
+    // [COMMENT]: Kiểm tra xem user đã đăng nhập chưa bằng cách lấy dữ liệu từ LocalStorage
     const userStr = localStorage.getItem('user');
     if (userStr) {
         const user = JSON.parse(userStr);
@@ -75,12 +78,12 @@ document.querySelectorAll('.add-to-cart').forEach(btn => {
 
         const existingItem = cart.find(item => item.name === name);
         if (existingItem) {
-            existingItem.quantity++;
+            existingItem.quantity++; // [COMMENT]: Nếu món đã có thì tăng số lượng
         } else {
-            cart.push({ name, price, quantity: 1 });
+            cart.push({ name, price, quantity: 1 }); // [COMMENT]: Chưa có thì thêm mới
         }
 
-        updateCart();
+        updateCart(); // [COMMENT]: Cập nhật lại giao diện giỏ hàng ngay lập tức
 
         // Hiệu ứng nút
         const originalText = e.target.textContent;
@@ -200,7 +203,9 @@ if (registerForm) { // Kiểm tra nếu form tồn tại thì mới chạy
 
         try {
             // Gửi dữ liệu về Server
+            // Gửi dữ liệu về Server
             // Lưu ý: Đảm bảo server của bạn đã xử lý nhận field 'password' nếu cần
+            // [COMMENT]: Gọi API đăng ký thành viên
             const response = await fetch(`${API_BASE_URL}/api/customers/register`, {
                 method: 'POST',
                 headers: {
@@ -290,6 +295,7 @@ if (loginForm) {
                 document.getElementById('loginModal').classList.remove('active');
 
                 // 2. Lưu token (nếu bạn dùng localStorage để lưu phiên)
+                // [COMMENT]: QUAN TRỌNG - Lưu token để dùng cho các request cần quyền Admin/User sau này
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.data));
 
@@ -351,6 +357,7 @@ async function loadDynamicMenu() {
         const container = document.getElementById('dynamicMenuContainer');
 
         if(data.success && container) {
+            // [COMMENT]: Xóa nội dung cũ (ví dụ chữ "Loading...") trước khi render món ăn mới
             container.innerHTML = ''; // Clear loading text
 
             if (data.data.length === 0) {
@@ -389,8 +396,11 @@ async function loadDynamicMenu() {
                 container.innerHTML += html;
             });
 
+
+
             // QUAN TRỌNG: Gán lại sự kiện Click cho nút "Thêm +" mới sinh ra
             // (Vì code cũ chỉ gán event cho các nút có sẵn lúc đầu)
+            // [COMMENT]: Nếu không gọi hàm này, các nút "Thêm" trong menu mới load sẽ KHÔNG bấm được
             reattachCartEvents();
         }
     } catch (e) { console.error("Error loading menu:", e); }

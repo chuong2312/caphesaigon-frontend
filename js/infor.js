@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!userStr || !token) {
         alert("Vui lòng đăng nhập trước!");
-        window.location.href = 'index.html';
+        window.location.href = 'index.html'; // [COMMENT]: Nếu chưa đăng nhập, đá về trang chủ
         return;
     }
 
@@ -127,6 +127,8 @@ document.getElementById('courseForm').addEventListener('submit', async (e) => {
     // 2. Check xem có file ảnh không
     const imageInput = document.getElementById('courseImage');
     if (imageInput.files[0]) {
+        // [COMMENT]: Lấy file từ input và append vào FormData.
+        // Đây là cách chuẩn để gửi file lên server.
         formData.append('image', imageInput.files[0]);
     }
 
@@ -137,6 +139,8 @@ document.getElementById('courseForm').addEventListener('submit', async (e) => {
             headers: {
                 'Authorization': `Bearer ${token}` 
                 // KHÔNG ĐƯỢC THÊM 'Content-Type': 'application/json' ở đây
+                // [COMMENT]: Khi dùng FormData, browser tự động set Content-Type là multipart/form-data kèm boundary.
+                // Nếu set tay 'application/json' sẽ bị lỗi server không đọc được file.
             },
             body: formData
         });
